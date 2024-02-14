@@ -7,16 +7,13 @@
 	</head>
 	<body>
 		<h1>Goodshop</h1>
-		
-		<form id="item-form">
-			<label for="item">Item:</label>
-			<input type="text" id="item" name="item" required>
-			<button type="submit">Add</button>
-		</form>	
 
-		<ul id="list"></ul>
-		<button type="submit" onclick="confirm_list()">Confirm List</button>
+        <input type="text" id="item_name" placeholder="Item Name">
+        <input type="number" id="item_quantity" placeholder="Quantity">
+        <button onclick="add_item()">Add Item</button>
+		<ul id="shopping_list"></ul>
 
+		<button type="submit" id="confirm_buttton" onclick="confirm_list()">Confirm</button>
 		<script src="index.js"></script>
 	</body>
 </html>

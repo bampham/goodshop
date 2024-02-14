@@ -1,5 +1,5 @@
-; ModuleID = 'probe4.3a5c64a693b45dfc-cgu.0'
-source_filename = "probe4.3a5c64a693b45dfc-cgu.0"
+; ModuleID = 'probe4.2383371fd3db541c-cgu.0'
+source_filename = "probe4.2383371fd3db541c-cgu.0"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-unknown-linux-gnu"
 
@@ -9,17 +9,17 @@ target triple = "x86_64-unknown-linux-gnu"
 
 ; probe4::probe
 ; Function Attrs: nonlazybind uwtable
-define void @_ZN6probe45probe17hf1d8e60ae916ae25E() unnamed_addr #0 {
+define void @_ZN6probe45probe17h8e4e1c0f85c14267E() unnamed_addr #0 {
 start:
   %0 = call i1 @llvm.expect.i1(i1 false, i1 false)
-  br i1 %0, label %panic.i, label %"_ZN4core3num21_$LT$impl$u20$u32$GT$10div_euclid17h288362f4c0021cc7E.exit"
+  br i1 %0, label %panic.i, label %"_ZN4core3num21_$LT$impl$u20$u32$GT$10div_euclid17h41e39b26c51a6b2cE.exit"
 
 panic.i:                                          ; preds = %start
 ; call core::panicking::panic
-  call void @_ZN4core9panicking5panic17h26e968c314619fd5E(ptr align 1 @str.0, i64 25, ptr align 8 @alloc_5491181a412bbabfebff41ab96c406e4) #3
+  call void @_ZN4core9panicking5panic17hd1dee23cbb6390f9E(ptr align 1 @str.0, i64 25, ptr align 8 @alloc_5491181a412bbabfebff41ab96c406e4) #3
   unreachable
 
-"_ZN4core3num21_$LT$impl$u20$u32$GT$10div_euclid17h288362f4c0021cc7E.exit": ; preds = %start
+"_ZN4core3num21_$LT$impl$u20$u32$GT$10div_euclid17h41e39b26c51a6b2cE.exit": ; preds = %start
   ret void
 }
 
@@ -28,7 +28,7 @@ declare i1 @llvm.expect.i1(i1, i1) #1
 
 ; core::panicking::panic
 ; Function Attrs: cold noinline noreturn nonlazybind uwtable
-declare void @_ZN4core9panicking5panic17h26e968c314619fd5E(ptr align 1, i64, ptr align 8) unnamed_addr #2
+declare void @_ZN4core9panicking5panic17hd1dee23cbb6390f9E(ptr align 1, i64, ptr align 8) unnamed_addr #2
 
 attributes #0 = { nonlazybind uwtable "probe-stack"="inline-asm" "target-cpu"="x86-64" }
 attributes #1 = { nocallback nofree nosync nounwind willreturn memory(none) }
@@ -40,4 +40,4 @@ attributes #3 = { noreturn }
 
 !0 = !{i32 8, !"PIC Level", i32 2}
 !1 = !{i32 2, !"RtLibUseGOT", i32 1}
-!2 = !{!"rustc version 1.78.0-nightly (6cc484351 2024-02-10)"}
+!2 = !{!"rustc version 1.78.0-nightly (b381d3ab2 2024-02-12)"}

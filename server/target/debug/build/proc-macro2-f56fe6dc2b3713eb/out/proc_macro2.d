@@ -1,6 +1,6 @@
-/home/cbroo/programming/omega365/app/server/target/debug/build/proc-macro2-f56fe6dc2b3713eb/out/libproc_macro2.rmeta: build/probe.rs
+/home/cbroo/programming/goodshop/server/target/debug/build/proc-macro2-f56fe6dc2b3713eb/out/libproc_macro2.rmeta: build/probe.rs
 
-/home/cbroo/programming/omega365/app/server/target/debug/build/proc-macro2-f56fe6dc2b3713eb/out/proc_macro2.d: build/probe.rs
+/home/cbroo/programming/goodshop/server/target/debug/build/proc-macro2-f56fe6dc2b3713eb/out/proc_macro2.d: build/probe.rs
 
 build/probe.rs:
 
