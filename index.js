@@ -1,101 +1,97 @@
-
-
-function add_item() {
-
-    var item_nameInput = document.getElementById("item_name");
-    var item_quantityInput = document.getElementById("item_quantity");
-
-    var item_name = item_nameInput.value;
-    var item_quantity = item_quantityInput.value;
-
-    // create new elements
-
-    var shopping_list = document.getElementById("shopping_list");
-    var list_form = document.createElement("form");
-    var item_name = document.createElement("input");
-    var item_quant = document.createElement("input");
-
-    // dup values
-
-    item_name.type = "text";
-    item_name.name = "item_name";
-    item_name.placeholder = "Item Name";
-    item_name.value = item_nameInput.value;
-
-    item_quant.type = "text";
-    item_quant.name = "item_quantity";
-    item_quant.placeholder = "Item Quantity";
-    item_quant.value = item_quantityInput.value;
-
-    // append to form
-    list_form.className = "item";
-    list_form.appendChild(item_name);
-    list_form.appendChild(item_quant);
-
-    var delete_button = document.createElement("button");
-    delete_button.textContent = "Delete";
-    delete_button.onclick = function() {
-        list_form.remove();
-        var confirm_button = document.getElementById("confirm_button");
-        if (get_items().length > 0) {
-            confirm_button.disabled = false;
-        } else {
-            confirm_button.disabled = true;
-        }
-    };
-
-    list_form.appendChild(delete_button);
-    shopping_list.appendChild(list_form);
-
-    item_nameInput.value = "";
-    item_quantityInput.value = "";
-
-}
-
-function get_items() {
-    var items = []; 
-    
-    const list_items = document.querySelectorAll("form.item");
-    for (let i = 0; i < list_items.length; ++i) {
-        var new_item = [];
-        const fields = list_items[i].getElementsByTagName("input");
-        for (let j = 0; j < fields.length; ++j) {
-            if (fields[j].type === "text" || fields[j].type === "number") {
-                new_item.push(fields[j].value);
-            }
-        }
-        items.push(new_item);
+class ShoppingList {
+    constructor(title, items) {
+        this.title = title;
+        this.items = items;
     }
-    return items;
 }
 
-function confirm_list() {
-    const items = get_items();
-    console.log(items);
+class GetRequest {
+    constructor(shopping_lists) {
+        this.shopping_lists = shopping_lists;
+    }
+}
 
-    // send POST request
-    const json_data = JSON.stringify({ items: items }); 
-    console.log("JSON Data: ", json_data);
+function display_lists(getRequest) {
+    const shopping_lists = document.getElementById("lists");
+    shopping_lists.innerHTML = "";
 
-    const url = 'http://127.0.0.1:4040/';
-    fetch(url, {
-        method: 'POST',
+    // create elemtns
+    getRequest.shopping_lists.forEach(list => {
+        const list_container = document.createElement("div");
+        list_container.classList.add("shopping-list");
+
+        const title_element = document.createElement("h2");
+        title_element.textContent = list.title;
+
+        const item_list = document.createElement("ul");
+        list.items.forEach(item => {
+            const list_item = document.createElement("li");
+            list_item.textContent = `${item[0]} - Q: ${item[1]}`;
+            item_list.appendChild(list_item);
+        });
+
+        const edit_button = document.createElement("button");
+        edit_button.textContent = "Edit";
+        edit_button.addEventListener("click", () => {
+            // todo: edit function
+            console.log("edit button clicked for shopping list:", list.title);
+        });
+
+        const delete_button = document.createElement("button");
+        delete_button.textContent = "Delete";
+        delete_button.addEventListener("click", () => {
+            const confirmed = confirm(`Are you sure to delete the list "${list.title}"?`);
+            if (confirmed) {
+                delete_list(list.title);
+            }
+        });
+
+        list_container.appendChild(title_element);
+        list_container.appendChild(item_list);
+        list_container.appendChild(edit_button); 
+        list_container.appendChild(delete_button); 
+        shopping_lists.appendChild(list_container);
+    });
+}
+
+function delete_list(list_title) {
+    fetch("http://127.0.0.1:4040", {
+        method: "DELETE",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
-        body: json_data
+        body: JSON.stringify({ title: list_title, items: [[]] })
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("failed delete");
         }
-        return response.text(); 
+
+        location.reload();
     })
-    .then(data => {
-        console.log(data); 
-    })
-    .catch(error => {
-        console.error('There was a problem with your fetch operation:', error);
+    .catch(err => {
+        console.error("error deleting: ", err);
     });
 }
+
+function fetch_lists() {
+    fetch("http://127.0.0.1:4040", {
+        method: "GET"
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Not ok response");
+        }
+        return response.json();
+    })
+    .then(data => {
+        const getRequest = new GetRequest(data.shopping_lists.map(list => new ShoppingList(list.title, list.items)));
+        display_lists(getRequest);
+    })
+    .catch(err => {
+        console.error("Error in fetch op: ", err);
+    });
+}
+
+fetch_lists();
 

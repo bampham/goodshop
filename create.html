@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>goodshop</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
+        <div><a href="create.html">new</a>  <a href="index.html">lists</a></div>
+		<h1>Create</h1>
+
+        <input type="text" id="list-title" placeholder="Title">
+        <input type="text" id="item_name" placeholder="Item Name">
+        <input type="number" id="item_quantity" placeholder="Quantity">
+        <button onclick="add_item()">Add Item</button>
+		<ul id="shopping_list"></ul>
+
+		<button type="submit" id="confirm_buttton" onclick="confirm_list()">Confirm</button>
+		<script src="create.js"></script>
+	</body>
+</html>
