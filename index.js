@@ -33,14 +33,13 @@ function display_lists(getRequest) {
         const edit_button = document.createElement("button");
         edit_button.textContent = "Edit";
         edit_button.addEventListener("click", () => {
-            // todo: edit function
-            console.log("edit button clicked for shopping list:", list.title);
+            edit_list(list.title);
         });
 
         const delete_button = document.createElement("button");
         delete_button.textContent = "Delete";
         delete_button.addEventListener("click", () => {
-            const confirmed = confirm(`Are you sure to delete the list "${list.title}"?`);
+            const confirmed = confirm(`are you sure to delete the list "${list.title}"?`);
             if (confirmed) {
                 delete_list(list.title);
             }
@@ -52,6 +51,10 @@ function display_lists(getRequest) {
         list_container.appendChild(delete_button); 
         shopping_lists.appendChild(list_container);
     });
+}
+
+function edit_list(list_title) {
+    // todo: PUT request
 }
 
 function delete_list(list_title) {

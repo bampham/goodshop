@@ -1,3 +1,4 @@
+mod utils;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
@@ -14,12 +15,6 @@ struct ShoppingList {
 #[derive(Debug, Serialize)]
 struct GetRequest {
     shopping_lists: Vec<ShoppingList>
-}
-
-fn connect_db() -> PooledConn {
-    let url = "mysql://mathias:password@localhost:3306/Handleliste";
-    let pool = Pool::new(url).unwrap();
-    pool.get_conn().unwrap()
 }
 
 fn handle_client(mut stream: TcpStream) {
@@ -60,20 +55,24 @@ fn handle_client(mut stream: TcpStream) {
 }
 
 fn handle_post_request(mut stream: TcpStream, request_str: &str) {
-    let mut conn = connect_db();
+    let mut conn = utils::connect_db();
 
-    let json_start_index = match request_str.find("{") {
-        Some(index) => index,
-        None => {
-            println!("no json data in request");
-            return;
-        }
-    };
-
+    let json_start_index = utils::find_start_index(request_str);
     let json_str = &request_str[json_start_index..];
     match serde_json::from_str::<ShoppingList>(&json_str) {
         Ok(request) => {
             println!("request: {:?}", request);
+            // check if input is sql friendly
+            // index 1 is the items while 0 is title
+            // todo: add for title and quant
+            for item in request.items[0].iter() {
+                if !utils::is_sql_friendly(item) {
+                    println!("not sql friendly inputs");
+                    let response = "HTTP/1.1 400 Unfriendly Input\r\nContent-Length: 0\r\n\r\n";
+                    stream.write_all(response.as_bytes()).unwrap();
+                    return;
+                }
+            }
 
             // insert into ShoppingList 
             let query = r#"
@@ -125,12 +124,12 @@ fn handle_post_request(mut stream: TcpStream, request_str: &str) {
 
 
 fn handle_get_request(mut stream: TcpStream, request_str: &str) {
-    let mut conn = connect_db();
+    let mut conn = utils::connect_db();
 
     let shopping_list_query = "SELECT * FROM ShoppingList";
     let shopping_lists: Vec<ShoppingList> = conn
         .query_map(shopping_list_query, |(list_id, title, _time_stamp): (i32, String, String)| {
-            let mut inner_conn = connect_db();
+            let mut inner_conn = utils::connect_db();
             let item_query = format!("SELECT product_name, quantity FROM Product WHERE list_id = {}", list_id);
             let items: Vec<Vec<String>> = inner_conn
                 .query_map(&item_query, |(product_name, quantity): (String, i32)| { 
@@ -159,20 +158,14 @@ fn handle_get_request(mut stream: TcpStream, request_str: &str) {
 }
 
 fn handle_put_request(mut stream: TcpStream, request_str: &str) {
-    let mut conn = connect_db();
+    let mut conn = utils::connect_db();
     // todo: handle put request to update db
 }
 
 fn handle_delete_request(mut stream: TcpStream, request_str: &str) {
-    let mut conn = connect_db();
-    let json_start_index = match request_str.find("{") {
-        Some(index) => index,
-        None => {
-            println!("no json data in request");
-            return;
-        }
-    };
+    let mut conn = utils::connect_db();
 
+    let json_start_index = utils::find_start_index(request_str);
     let json_str = &request_str[json_start_index..];
     match serde_json::from_str::<ShoppingList>(&json_str) {
         Ok(request) => {
@@ -192,8 +185,6 @@ fn handle_delete_request(mut stream: TcpStream, request_str: &str) {
                 let response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n";
                 stream.write_all(response.as_bytes()).unwrap();
             }
-
-             
         }
         Err(err) => {
             println!("Failed to parse JSON: {}", err);
